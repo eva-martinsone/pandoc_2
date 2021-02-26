@@ -1,7 +1,7 @@
 ---
 title: "Datu kārtošana"
 author: [Eva Mārtiņsone]
-date: "24.02.2021."
+date: "26.02.2021."
 subject: "Programmēšana"
 keywords: [Markdown, Example]
 subtitle: "Referāts"
@@ -15,8 +15,9 @@ titlepage-background: "evasfons.pdf"
 Veikt datu kārtošanu pēc vairākiem atlases kritēriem. Iegūtās datu kopas nosūtītas atbildīgajiem uz e-pastiem
 
 # Izmantotie moduļi
-pandas.DataFrame modulis izmantots ar mērķi veikt darbības ar datiem tabulā gan pēc rindu, gan pēc kolonnu etiķetēm
-smtplib modulis izmatots ar mērķi izsūtīt e-pastus
+pandas.DataFrame - izmantots ar mērķi veikt darbības ar datiem tabulā gan pēc rindu, gan pēc kolonnu etiķetēm
+smtplib - izmatots ar mērķi izveidot e-pastu izsūtīšanas sesiju
+MIMETex - izmantots ar mērķi sagatavot e-pastu un tā pielikumu
 
 # CSV faila imports
 pandas.read_csv - nodrošina csv faila nolasīšanu, kurā ir atdalītas vērtības
@@ -76,56 +77,36 @@ print('FDIS sektota pieteikumi', Jorens)
 # Epatsu izsūtīšana
 Par katru datu kopu, kas iegūta iepriekš aprakstīto datu indeksēšanā un grupēšanā pēc organizāciju pieteikumiem un atbildīgajiem, tiek sagatavots e-pasts pēc turpmāk esošā parauga
 
-## SMTP savienojuma izveidi
+## Nepieciešamās komponentes
 ```java
 import smtplib
-```
-
-## E-pasta pamatelementi
-```java
-To = "mmmartinsone@gmail.com" 
-Subject = "neizpilditie uzdevumi"
-Text = 'tetsa e-pasts'
+from email.mime.text import MIMEText
+import email
 ```
 
 ## Pieslēguma izveide
 ```java
-smtp_server = "smtp.gmail.com"
-port = 587
+server=smtplib.SMTP('smtp.gmail.com',587)
+server.starttls()
 ```
 
 ## Izsūtītāja e-pasta rekvizīti
 ```java
-e_pasta_sender = "mmmartinsone@gmail.com"
-e_pasta_parole = "parole" 
-```
-
-## Pieslegums e-pasta serverim
-```java
-server = smtplib.SMTP('smtp.gmail.com', 587)
-server.ehlo() 
-server.starttls()
-server.ehlo() 
-server.login(e_pasta_sender, e_pasta_parole)
+email="mmmartinsone@gmail.com"
+PASSWORD="parole"
 ```
 
 ## E-pasta saturs
 ```java
-Text = '\r\n'.join([
-   'To: %s' % To,
-   'From: %s' % e_pasta_sender,
-   'Subject: %s' % Subject,
-   '',
-   Normunds
-   ])
+server.login(email,PASSWORD)
+masaage=MIMEText('Kāpēc nav izpildīti uzdevumi', str == Normunds)
+masaage["From"]=email
+masaage["To"]=email
+masaage["Subject"]="Neizpildītie uzdevumi"
 ```
 
 ## E-pasta izsūtīšanu
 ```java
-try:
-   server.sendmail(e_pasta_sender, [To], saturs)
-   print('epasts nosutits')
-except:
-   print('e_pasts nav nosutits') 
-server.quit()
+server.sendmail(email,email,masaage.as_string())
+print('e-pasts nosūtīts')
 ```
